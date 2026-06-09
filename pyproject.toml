@@ -1,0 +1,48 @@
+[project]
+name = "id2url"
+version = "0.1.2"
+description = "Convert package registry coordinates (origin IDs) to source download URLs"
+readme = "README.md"
+authors = [
+    { name = "Dinesh", email = "dineshr93@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31.0",
+    "click>=8.1.0",
+]
+keywords = ["package-manager", "npm", "pypi", "maven", "crates", "nuget", "rubygems", "go", "packagist", "cocoapods", "hex", "dart"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.scripts]
+id2url = "id2url.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.27,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

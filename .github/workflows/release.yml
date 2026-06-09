@@ -1,0 +1,138 @@
+name: Publish Python Package
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+    
+    - name: Install dependencies
+      run: |
+        uv sync
+    
+    - name: Build package
+      run: |
+        uv build
+    
+    - name: Get tag version
+      id: version
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        VERSION_CLEAN=${VERSION#v}
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "VERSION_CLEAN=$VERSION_CLEAN" >> $GITHUB_OUTPUT
+        echo "Tag version: $VERSION"
+        echo "Clean version: $VERSION_CLEAN"
+    
+    - name: Get previous tag
+      id: prevtag
+      run: |
+        PREV_TAG=$(git describe --tags --abbrev=0 $(git describe --tags --abbrev=0 2>/dev/null)^ 2>/dev/null || echo "")
+        echo "PREV_TAG=$PREV_TAG" >> $GITHUB_OUTPUT
+        echo "Previous tag: $PREV_TAG"
+    
+    - name: Generate release notes
+      id: releasenotes
+      run: |
+        VERSION=${{ steps.version.outputs.VERSION }}
+        VERSION_CLEAN=${{ steps.version.outputs.VERSION_CLEAN }}
+        PREV_TAG=${{ steps.prevtag.outputs.PREV_TAG }}
+
+        echo "# Release $VERSION" > release_notes.md
+        echo "" >> release_notes.md
+        echo "**Release Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> release_notes.md
+        echo "" >> release_notes.md
+
+        if [ -n "$PREV_TAG" ]; then
+          echo "## 📊 Changes since $PREV_TAG" >> release_notes.md
+          echo "" >> release_notes.md
+
+          echo "### 🔢 Commit Count" >> release_notes.md
+          COMMIT_COUNT=$(git rev-list --count $PREV_TAG..HEAD)
+          echo "$COMMIT_COUNT commit(s)" >> release_notes.md
+          echo "" >> release_notes.md
+
+          echo "### 📝 Commit Details" >> release_notes.md
+          echo "" >> release_notes.md
+          git log $PREV_TAG..HEAD --pretty=format:"- %s (%h) by @%an" >> release_notes.md
+          echo "" >> release_notes.md
+
+          echo "### 📦 Files Changed" >> release_notes.md
+          echo "" >> release_notes.md
+          git diff --name-only $PREV_TAG..HEAD | while read file; do
+            ADDITIONS=$(git diff $PREV_TAG..HEAD -- "$file" | grep -c "^+" || echo "0")
+            DELETIONS=$(git diff $PREV_TAG..HEAD -- "$file" | grep -c "^-" || echo "0")
+            echo "- **$file**: +$ADDITIONS -$DELETIONS" >> release_notes.md
+          done
+          echo "" >> release_notes.md
+        else
+          echo "## 🎉 Initial Release" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "This is the first release of id2url." >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### 🔢 Total Commits" >> release_notes.md
+          echo "$(git rev-list --count HEAD) commit(s)" >> release_notes.md
+          echo "" >> release_notes.md
+        fi
+
+        echo "## 🛠 Build Artifacts" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "The following Python packages are available for download:" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "| Platform | File Name |" >> release_notes.md
+        echo "|----------|-----------|" >> release_notes.md
+        echo "| Cross-platform | id2url-${VERSION_CLEAN}-py3-none-any.whl |" >> release_notes.md
+        echo "| Cross-platform | id2url-${VERSION_CLEAN}.tar.gz |" >> release_notes.md
+        echo "" >> release_notes.md
+
+        echo "## 📋 Prerequisites" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "- Python 3.11+" >> release_notes.md
+        echo "- pip or uv" >> release_notes.md
+        echo "" >> release_notes.md
+
+        echo "## 🚀 Usage" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "Install from PyPI:" >> release_notes.md
+        echo "\`\`\`bash" >> release_notes.md
+        echo "pip install id2url" >> release_notes.md
+        echo "\`\`\`" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "Or with uv:" >> release_notes.md
+        echo "\`\`\`bash" >> release_notes.md
+        echo "uv pip install id2url" >> release_notes.md
+        echo "\`\`\`" >> release_notes.md
+
+        cat release_notes.md
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        body_path: release_notes.md
+        files: |
+          dist/*.whl
+          dist/*.tar.gz
+        draft: false
+        prerelease: ${{ contains(steps.version.outputs.VERSION, '-') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
