@@ -1,5 +1,7 @@
 # id2url
 
+https://github.com/dineshr93/id2url/releases/download/v0.1.2-video/demo.mp4
+
 Convert package registry coordinates (origin IDs) to source download URLs.
 
 **All registries automatically verify that packages exist** before returning URLs. If a package is not found, a clear error message shows which registries were checked.
