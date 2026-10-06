@@ -1,6 +1,7 @@
 # id2url
 
-https://github.com/dineshr93/id2url/releases/download/v0.1.2-video/demo.mp4
+
+https://github.com/user-attachments/assets/2eb2aa27-2a54-4ef0-9147-86b140cf0d58
 
 Convert package registry coordinates (origin IDs) to source download URLs.
 
