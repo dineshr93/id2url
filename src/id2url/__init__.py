@@ -36,7 +36,7 @@ from .registries import (
     parse_maven_coordinate,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Registry name to function mapping
 REGISTRY_HANDLERS = {
