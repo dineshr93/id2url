@@ -25,7 +25,7 @@ GOOGLE_MAVEN_PREFIXES = (
 def _get_repositories_for_group(group_id: str) -> List[Tuple[str, str]]:
     """
     Get ordered list of repositories to try for a given group ID.
-    
+
     Google/Android packages try Google Maven first, others try Maven Central first.
     """
     if group_id.startswith(GOOGLE_MAVEN_PREFIXES):
@@ -101,7 +101,7 @@ def get_maven_download_url(
 ) -> Tuple[str, str, str]:
     """
     Convert Maven origin ID to download URL with automatic verification.
-    
+
     Automatically checks multiple repositories (Maven Central, Google Maven)
     and returns the first valid URL. For Android/Google packages, checks
     Google Maven first.
@@ -122,7 +122,7 @@ def get_maven_download_url(
 
     Returns:
         Tuple of (artifact_id, version, download_url)
-    
+
     Raises:
         ValueError: If artifact not found in any repository
 

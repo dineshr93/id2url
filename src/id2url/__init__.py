@@ -87,7 +87,7 @@ SUPPORTED_REGISTRIES = list(REGISTRY_HANDLERS.keys())
 def get_download_url(registry: str, origin_id: str) -> Tuple[str, str, str]:
     """
     Convert a package coordinate to a download URL for the specified registry.
-    
+
     Automatically verifies that the package exists in the registry.
     For Maven, checks both Maven Central and Google Maven repositories.
 
@@ -107,7 +107,7 @@ def get_download_url(registry: str, origin_id: str) -> Tuple[str, str, str]:
 
         >>> get_download_url("maven", "com.google.guava:guava:31.1-jre")
         ('guava', '31.1-jre', 'https://repo1.maven.org/maven2/com/google/guava/guava/31.1-jre/guava-31.1-jre-sources.jar')
-        
+
         >>> get_download_url("maven", "androidx.glance.wear:wear:1.0.0-alpha10")
         ('wear', '1.0.0-alpha10', 'https://dl.google.com/android/maven2/androidx/glance/wear/wear/1.0.0-alpha10/wear-1.0.0-alpha10-sources.jar')
     """
