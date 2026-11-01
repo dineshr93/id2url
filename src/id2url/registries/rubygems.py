@@ -2,7 +2,7 @@
 
 from typing import Dict, Optional, Tuple
 
-import requests
+from ._check import check_url_exists as _check_url_exists
 
 RUBYGEMS_BASE_URL = "https://rubygems.org"
 
@@ -21,15 +21,6 @@ RUBY_PLATFORMS = {
     "mswin32",
     "universal-darwin",
 }
-
-
-def _check_url_exists(url: str, timeout: int = 10) -> bool:
-    """Check if a URL exists using HEAD request."""
-    try:
-        response = requests.head(url, timeout=timeout, allow_redirects=True)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
 
 
 def parse_rubygems_coordinate(origin_id: str) -> Dict[str, Optional[str]]:
@@ -139,3 +130,6 @@ def get_rubygems_source_url(origin_id: str, timeout: int = 10) -> Tuple[str, str
         )
 
     return gem_name, version or "", download_url
+
+
+

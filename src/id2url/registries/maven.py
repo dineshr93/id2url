@@ -2,7 +2,7 @@
 
 from typing import Dict, List, Optional, Tuple
 
-import requests
+from ._check import check_url_exists as _check_url_exists
 
 MAVEN_CENTRAL_BASE_URL = "https://repo1.maven.org/maven2"
 GOOGLE_MAVEN_BASE_URL = "https://dl.google.com/android/maven2"
@@ -20,15 +20,6 @@ GOOGLE_MAVEN_PREFIXES = (
     "com.android.",
     "android.arch.",
 )
-
-
-def _check_url_exists(url: str, timeout: int = 10) -> bool:
-    """Check if a URL exists using HEAD request."""
-    try:
-        response = requests.head(url, timeout=timeout, allow_redirects=True)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
 
 
 def _get_repositories_for_group(group_id: str) -> List[Tuple[str, str]]:
@@ -201,3 +192,6 @@ def get_maven_download_url(
         f"Artifact not found in any Maven repository for {origin_id}\n"
         f"Checked:\n{repo_details}"
     )
+
+
+

@@ -2,7 +2,7 @@
 
 from typing import Tuple
 
-import requests
+from ._check import check_url_exists as _check_url_exists
 
 GO_PROXY_BASE_URL = "https://proxy.golang.org"
 
@@ -15,15 +15,6 @@ def _encode_module_path(path: str) -> str:
     e.g., "GitHub" -> "!git!hub"
     """
     return "".join(f"!{c.lower()}" if c.isupper() else c for c in path)
-
-
-def _check_url_exists(url: str, timeout: int = 10) -> bool:
-    """Check if a URL exists using HEAD request."""
-    try:
-        response = requests.head(url, timeout=timeout, allow_redirects=True)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
 
 
 def get_go_module_download_url(origin_id: str, timeout: int = 10) -> Tuple[str, str, str]:
@@ -109,3 +100,6 @@ def get_go_module_mod_url(module_path: str, version: str) -> str:
     """
     encoded_path = _encode_module_path(module_path)
     return f"{GO_PROXY_BASE_URL}/{encoded_path}/@v/{version}.mod"
+
+
+

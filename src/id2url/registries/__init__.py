@@ -1,5 +1,6 @@
 """Registry modules for various package managers."""
 
+from ._check import check_url_exists
 from .npm import get_npm_download_url
 from .dart import get_dart_download_url
 from .pypi import get_pypi_download_url, normalize_pypi_name
@@ -13,6 +14,7 @@ from .cocoapods import get_cocoapods_download_url
 from .hex import get_hex_download_url
 
 __all__ = [
+    "check_url_exists",
     "get_npm_download_url",
     "get_dart_download_url",
     "get_pypi_download_url",

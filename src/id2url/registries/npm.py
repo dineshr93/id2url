@@ -2,18 +2,9 @@
 
 from typing import Tuple
 
-import requests
+from ._check import check_url_exists as _check_url_exists
 
 NPM_REGISTRY_BASE_URL = "https://registry.npmjs.org"
-
-
-def _check_url_exists(url: str, timeout: int = 10) -> bool:
-    """Check if a URL exists using HEAD request."""
-    try:
-        response = requests.head(url, timeout=timeout, allow_redirects=True)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
 
 
 def get_npm_download_url(origin_id: str, timeout: int = 10) -> Tuple[str, str, str]:

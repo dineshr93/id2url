@@ -2,18 +2,9 @@
 
 from typing import Tuple
 
-import requests
+from ._check import check_url_exists as _check_url_exists
 
 NUGET_BASE_URL = "https://api.nuget.org/v3-flatcontainer"
-
-
-def _check_url_exists(url: str, timeout: int = 10) -> bool:
-    """Check if a URL exists using HEAD request."""
-    try:
-        response = requests.head(url, timeout=timeout, allow_redirects=True)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
 
 
 def get_nuget_download_url(origin_id: str, timeout: int = 10) -> Tuple[str, str, str]:
@@ -101,3 +92,6 @@ def get_nuget_snupkg_url(origin_id: str, timeout: int = 10) -> Tuple[str, str, s
         )
 
     return package_name, version, download_url
+
+
+

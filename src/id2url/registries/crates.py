@@ -2,20 +2,10 @@
 
 from typing import Tuple
 
-import requests
+from ._check import check_url_exists as _check_url_exists
 
 CRATES_IO_STATIC_URL = "https://static.crates.io/crates"
 CRATES_IO_API_URL = "https://crates.io/api/v1/crates"
-
-
-def _check_url_exists(url: str, timeout: int = 10) -> bool:
-    """Check if a URL exists using HEAD request."""
-    try:
-        headers = {"User-Agent": "id2url/1.0"}  # Required by crates.io
-        response = requests.head(url, headers=headers, timeout=timeout, allow_redirects=True)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
 
 
 def get_crates_download_url(origin_id: str, timeout: int = 10) -> Tuple[str, str, str]:

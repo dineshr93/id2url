@@ -2,18 +2,9 @@
 
 from typing import Dict, Optional, Tuple
 
-import requests
+from ._check import check_url_exists as _check_url_exists
 
 HEX_PM_BASE_URL = "https://repo.hex.pm"
-
-
-def _check_url_exists(url: str, timeout: int = 10) -> bool:
-    """Check if a URL exists using HEAD request."""
-    try:
-        response = requests.head(url, timeout=timeout, allow_redirects=True)
-        return response.status_code == 200
-    except requests.RequestException:
-        return False
 
 
 def parse_hex_coordinate(origin_id: str) -> Dict[str, Optional[str]]:
@@ -137,3 +128,6 @@ def get_hex_api_url(package_name: str, organization: Optional[str] = None) -> st
     if organization:
         return f"https://hex.pm/api/repos/{organization}/packages/{package_name}"
     return f"https://hex.pm/api/packages/{package_name}"
+
+
+

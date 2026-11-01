@@ -213,6 +213,32 @@ def batch(
         sys.exit(1)
 
 
+@main.command()
+@click.argument("registry", type=click.Choice(SUPPORTED_REGISTRIES, case_sensitive=False))
+@click.argument("origin_id")
+def verify(registry: str, origin_id: str) -> None:
+    """Report whether a coordinate's URL is verified.
+
+    Resolves the coordinate and checks the local verified cache. For registries
+    whose URL is a fixed pattern (npm, crates, maven, ...), a cache hit needs
+    no network. Registries that must query an API first (pypi, packagist,
+    cocoapods) always need that API call.
+
+    Exit 0 if verified, exit 1 if not.
+
+    Examples:
+
+        id2url verify npm lodash/4.17.21
+    """
+    try:
+        _, _, download_url = get_download_url(registry, origin_id)
+    except Exception as e:
+        click.echo(f"not verified: {e}", err=True)
+        sys.exit(1)
+
+    click.echo(f"verified: {download_url}")
+
+
 @main.command("list")
 def list_registries() -> None:
     """List all supported package registries."""
